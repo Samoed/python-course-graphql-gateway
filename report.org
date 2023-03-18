@@ -1,0 +1,15 @@
+#+title: Report
+* make all
+** Asciicinema
+[![asciicast](https://asciinema.org/a/568143.svg)](https://asciinema.org/a/568143)
+** Photo
+[[file:docs/img/make_all1.png]]
+[[file:docs/img/make_all2.png]]
+[[file:docs/img/make_all3.png]]
+* grapql
+** create
+[[file:docs/img/create.png]]
+** update
+[[file:docs/img/update.png]]
+** delete
+[[file:docs/img/delete.png]]
