@@ -2,15 +2,17 @@ from http.client import HTTPException
 from typing import Optional
 from urllib.parse import urlencode, urljoin
 
-from src.clients.base.base import BaseClient
-from src.models.places import PlaceModel
-from src.settings import settings
+from clients.base.base import BaseClient
+from models.places import PlaceModel, UpdatePlaceModel
+from settings import settings
 
 
 class PlacesClient(BaseClient):
     """
     Реализация функций для получения информации о любимых местах.
     """
+
+    endpoint = "/api/v1/"
 
     @property
     def base_url(self) -> str:
@@ -24,7 +26,7 @@ class PlacesClient(BaseClient):
         :return:
         """
 
-        endpoint = f"/api/v1/places/{place_id}"
+        endpoint = f"{self.endpoint}places/{place_id}"
         url = urljoin(self.base_url, endpoint)
 
         if response := self._request(self.GET, url):
@@ -33,20 +35,21 @@ class PlacesClient(BaseClient):
 
         return None
 
-    def get_list(self) -> Optional[list[PlaceModel]]:
+    def get_list(self, page: int, size: int) -> Optional[list[PlaceModel]]:
         """
         Получение списка любимых мест.
-        TODO: добавить пагинацию.
+
         :return:
         """
 
-        endpoint = "/api/v1/places"
+        endpoint = self.endpoint + "places"
         query_params = {
-            "limit": 20,
+            "page": page,
+            "size": size,
         }
         url = urljoin(self.base_url, f"{endpoint}?{urlencode(query_params)}")
         if response := self._request(self.GET, url):
-            return [self.__build_model(place) for place in response.get("data", [])]
+            return [self.__build_model(place) for place in response.get("items", [])]
 
         return None
 
@@ -58,7 +61,7 @@ class PlacesClient(BaseClient):
         :return:
         """
 
-        endpoint = "/api/v1/places"
+        endpoint = self.endpoint + "places"
         url = urljoin(self.base_url, endpoint)
         if response := self._request(self.POST, url, body=place.dict()):
             if place_data := response.get("data"):
@@ -74,15 +77,35 @@ class PlacesClient(BaseClient):
         :return:
         """
 
-        endpoint = f"/api/v1/places/{place_id}"
+        endpoint = f"{self.endpoint}places/{place_id}"
         url = urljoin(self.base_url, endpoint)
         result = True
         try:
             self._request(self.DELETE, url)
-        except HTTPException:
+        except HTTPException as exception:
+            print(exception)
             result = False
 
         return result
+
+    def update_place(
+        self, place_id: int, place: UpdatePlaceModel
+    ) -> tuple[bool, PlaceModel | None]:
+        """
+        Обновление объекта любимого места по его идентификатору.
+
+        :param place_id: Идентификатор объекта.
+        :param place: Объект любимого места для обновления.
+        :return:
+        """
+
+        endpoint = f"{self.endpoint}places/{place_id}"
+        url = urljoin(self.base_url, endpoint)
+        if response := self._request(self.PATCH, url, body=place.dict()):
+            if place_data := response.get("data"):
+                return True, self.__build_model(place_data)
+
+        return False, None
 
     @staticmethod
     def __build_model(data: dict) -> PlaceModel:

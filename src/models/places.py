@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from src.models.mixins import TimeStampMixin
+from models.mixins import TimeStampMixin
 
 
 class PlaceModel(TimeStampMixin, BaseModel):
@@ -17,3 +17,13 @@ class PlaceModel(TimeStampMixin, BaseModel):
     country: Optional[str] = Field(title="ISO Alpha2-код страны")
     city: Optional[str] = Field(title="Название города")
     locality: Optional[str] = Field(title="Местонахождение")
+
+
+class UpdatePlaceModel(TimeStampMixin, BaseModel):
+    """
+    Модель для обновления места.
+    """
+
+    latitude: float | None = Field(title="Широта")
+    longitude: float | None = Field(title="Долгота")
+    description: str | None = Field(title="Описание")
