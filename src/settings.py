@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     service: ServiceConfig
 
     class Config:
-        env_file = ".env"
+        env_file = ".env", "../.env"
         env_nested_delimiter = "__"
 
 

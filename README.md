@@ -131,9 +131,26 @@ mutation {
 }
 ```
 
-Query example to create a favorite place: 
+Query example to update a favorite place: 
 ```graphql
-
+mutation {
+  updatePlace (
+    placeId: 1,
+    latitude: 25.20485,
+    longitude: 55.27078,
+    description: "test"
+  ) {
+    place {
+      id
+      latitude
+      longitude
+      description
+      city
+      locality
+    }
+    result
+  }
+}
 ```
 
 This query will request additional information about related countries in optimal way using data loaders to prevent N + 1 requests problem.

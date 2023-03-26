@@ -1,9 +1,9 @@
 from typing import Optional
 from urllib.parse import urljoin
 
-from src.clients.base.base import BaseClient
-from src.models.countries import CountryModel
-from src.settings import settings
+from clients.base.base import BaseClient
+from models.countries import CountryModel
+from settings import settings
 
 
 class CountriesClient(BaseClient):
@@ -54,7 +54,7 @@ class CountriesClient(BaseClient):
                     currencies=country.get("currencies"),
                     languages=country.get("languages"),
                 )
-                for country in response
+                for country in response.get("results", [])
             ]
 
         return None
